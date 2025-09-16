@@ -11,45 +11,50 @@ const sampleTeamMembers = [
     name: 'Admin User',
     email: 'admin@hsrmotors.com',
     password: 'Admin123!',
+    employeeId: 'EMP001',
     role: 'Admin',
     department: 'Management',
-    phone: '+91-9876543210',
+    phone: '9876543210',
     status: 'active'
   },
   {
     name: 'Sarah Johnson',
     email: 'sarah.johnson@hsrmotors.com',
     password: 'Password123!',
+    employeeId: 'EMP002',
     role: 'Sales Manager',
     department: 'Sales',
-    phone: '+91-9876543211',
+    phone: '9876543211',
     status: 'active'
   },
   {
     name: 'Mike Wilson',
     email: 'mike.wilson@hsrmotors.com',
     password: 'Password123!',
-    role: 'Sales Representative',
+    employeeId: 'EMP003',
+    role: 'Sales Executive',
     department: 'Sales',
-    phone: '+91-9876543212',
+    phone: '9876543212',
     status: 'active'
   },
   {
     name: 'Emily Davis',
     email: 'emily.davis@hsrmotors.com',
     password: 'Password123!',
-    role: 'Sales Representative',
+    employeeId: 'EMP004',
+    role: 'Sales Executive',
     department: 'Sales',
-    phone: '+91-9876543213',
+    phone: '9876543213',
     status: 'active'
   },
   {
     name: 'James Smith',
     email: 'james.smith@hsrmotors.com',
     password: 'Password123!',
-    role: 'Sales Representative',
+    employeeId: 'EMP005',
+    role: 'Sales Executive',
     department: 'Sales',
-    phone: '+91-9876543214',
+    phone: '9876543214',
     status: 'active'
   }
 ];
@@ -58,7 +63,7 @@ const sampleLeads = [
   {
     name: 'John Anderson',
     email: 'john.anderson@gmail.com',
-    phone: '+91-9876543001',
+    phone: '9876543001',
     source: 'website',
     status: 'new',
     vehicleInterest: {
@@ -73,7 +78,7 @@ const sampleLeads = [
   {
     name: 'Maria Rodriguez',
     email: 'maria.rodriguez@gmail.com',
-    phone: '+91-9876543002',
+    phone: '9876543002',
     source: 'facebook',
     status: 'contacted',
     vehicleInterest: {
@@ -96,7 +101,7 @@ const sampleLeads = [
   {
     name: 'David Kim',
     email: 'david.kim@gmail.com',
-    phone: '+91-9876543003',
+    phone: '9876543003',
     source: 'google',
     status: 'qualified',
     vehicleInterest: {
@@ -125,7 +130,7 @@ const sampleLeads = [
   {
     name: 'Lisa Chen',
     email: 'lisa.chen@gmail.com',
-    phone: '+91-9876543004',
+    phone: '919876543004',
     source: 'referral',
     status: 'negotiating',
     vehicleInterest: {
@@ -154,7 +159,7 @@ const sampleLeads = [
   {
     name: 'Robert Taylor',
     email: 'robert.taylor@gmail.com',
-    phone: '+91-9876543005',
+    phone: '919876543005',
     source: 'walk-in',
     status: 'new',
     vehicleInterest: {
@@ -169,7 +174,7 @@ const sampleLeads = [
   {
     name: 'Jennifer Walsh',
     email: 'jennifer.walsh@gmail.com',
-    phone: '+91-9876543006',
+    phone: '919876543006',
     source: 'website',
     status: 'contacted',
     vehicleInterest: {
@@ -192,7 +197,7 @@ const sampleLeads = [
   {
     name: 'Michael Brown',
     email: 'michael.brown@gmail.com',
-    phone: '+91-9876543007',
+    phone: '919876543007',
     source: 'phone',
     status: 'converted',
     vehicleInterest: {
@@ -229,7 +234,7 @@ const sampleLeads = [
   {
     name: 'Amanda Foster',
     email: 'amanda.foster@gmail.com',
-    phone: '+91-9876543008',
+    phone: '919876543008',
     source: 'twitter',
     status: 'lost',
     vehicleInterest: {
