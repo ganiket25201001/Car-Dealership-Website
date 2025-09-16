@@ -4,11 +4,12 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import StatusBadge from '../components/ui/StatusBadge';
 import { mockLeads } from '../services/mockData';
+import { Lead, Interaction } from '../types';
 import { format } from 'date-fns';
 
 export default function LeadDetails() {
   const { id } = useParams<{ id: string }>();
-  const lead = mockLeads.find(l => l.id === id);
+  const lead = mockLeads.find((l: Lead) => l.id === id);
 
   if (!lead) {
     return (
@@ -147,7 +148,7 @@ export default function LeadDetails() {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Timeline</h3>
             <div className="space-y-4">
               {lead.interactions.length > 0 ? (
-                lead.interactions.map((interaction) => (
+                lead.interactions.map((interaction: Interaction) => (
                   <div key={interaction.id} className="flex items-start space-x-3">
                     <div className="flex-shrink-0">
                       <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
@@ -200,7 +201,7 @@ export default function LeadDetails() {
           <Card>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Tags</h3>
             <div className="flex flex-wrap gap-2">
-              {lead.tags.map((tag) => (
+              {lead.tags.map((tag: string) => (
                 <span
                   key={tag}
                   className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 text-xs font-medium rounded-md"

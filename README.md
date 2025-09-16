@@ -9,7 +9,160 @@
 [![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-4.4+-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3+-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3+-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https:## 🛠️ Troubleshooting
+
+### Common Issues
+
+**1. MongoDB Connection Error**
+```bash
+Error: connect ECONNREFUSED ::1:27017
+```
+**Solution:**
+- Ensure MongoDB is running: `net start MongoDB` (Windows)
+- Check connection string in `.env` file
+- Verify MongoDB is listening on port 27017
+
+**2. JWT Secret Error**
+```bash
+Error: JWT_SECRET environment variable is required
+```
+**Solution:**
+- Add `JWT_SECRET` to your `.env` file
+- Use a long, random string for security
+
+**3. Port Already in Use**
+```bash
+Error: listen EADDRINUSE: address already in use :::5000
+```
+**Solution:**
+- Kill process using port: `netstat -ano | findstr :5000` then `taskkill /PID <PID> /F`
+- Or change PORT in `.env` file
+
+**4. CORS Errors**
+```bash
+Access to fetch at 'http://localhost:5000' has been blocked by CORS
+```
+**Solution:**
+- Ensure both frontend (3002) and backend (5000) are running
+- Check FRONTEND_URL in server `.env` file
+
+### 🔍 Debug Mode
+
+Enable debug logging in development:
+
+```bash
+# In server/.env
+NODE_ENV=development
+DEBUG=leadflow:*
+```
+
+### 📱 Mobile Development
+
+For mobile testing, update CORS origins in `server/server.js`:
+
+```javascript
+const allowedOrigins = [
+  'http://localhost:3002',
+  'http://your-mobile-ip:3002'  // Add your local IP
+];
+```
+
+## 🔧 Advanced Configuration
+
+### Environment Variables
+
+**Server Environment (server/.env):**
+```env
+# Database
+MONGO_URI=mongodb://localhost:27017/leadflow-pro
+# or for Atlas: mongodb+srv://username:password@cluster.mongodb.net/leadflow-pro
+
+# Authentication
+JWT_SECRET=your-256-bit-secret
+JWT_EXPIRE=30d
+JWT_COOKIE_EXPIRE=30
+
+# Server
+NODE_ENV=development
+PORT=5000
+
+# Security
+BCRYPT_ROUNDS=12
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# Email (for password reset)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+```
+
+**Client Environment (client/.env):**
+```env
+# API Configuration
+VITE_API_URL=http://localhost:5000/api/v1
+
+# App Configuration
+VITE_APP_NAME=LeadFlow Pro
+VITE_APP_VERSION=1.0.0
+
+# Features
+VITE_ENABLE_ANALYTICS=true
+VITE_ENABLE_NOTIFICATIONS=true
+VITE_ENABLE_DARK_MODE=true
+```
+
+### Production Deployment
+
+**1. Build for Production:**
+```bash
+# Build frontend
+cd client && npm run build
+
+# Start backend in production mode
+cd server && NODE_ENV=production npm start
+```
+
+**2. Environment Setup:**
+- Set `NODE_ENV=production`
+- Use strong JWT secrets
+- Configure proper CORS origins
+- Set up MongoDB Atlas for cloud database
+- Enable HTTPS in production
+
+## 📊 Monitoring & Analytics
+
+### Health Checks
+
+- **Backend Health**: `GET http://localhost:5000/health`
+- **API Info**: `GET http://localhost:5000/api/v1/info`
+- **Database Status**: Check MongoDB logs
+
+### Performance Monitoring
+
+Monitor key metrics:
+- API response times
+- Database query performance
+- Memory usage
+- Error rates
+- User session analytics
+
+## � Support
+
+### 🆘 Getting Help
+
+- **📖 Documentation**: Check this README for detailed information
+- **🐛 Issues**: Report bugs via [GitHub Issues](https://github.com/ganiket25201001/Car-Dealership-Website/issues)
+- **💬 Discussions**: Join community discussions
+- **📧 Email**: Contact HSR Motors IT team for enterprise support
+
+### 🔗 Useful Links
+
+- [MongoDB Documentation](https://docs.mongodb.com/)
+- [Node.js Best Practices](https://nodejs.org/en/docs/guides/)
+- [React Documentation](https://react.dev/)
+- [Express.js Guide](https://expressjs.com/en/guide/routing.html)com/)
 
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/ganiket25201001/Car-Dealership-Website.svg?style=for-the-badge)](https://github.com/ganiket25201001/Car-Dealership-Website/stargazers)
@@ -87,10 +240,29 @@
 <br><strong>Tailwind CSS</strong>
 </td>
 </tr>
+<tr>
+<td align="center" width="120">
+<img src="https://skillicons.dev/icons?i=nodejs" width="48" height="48" alt="Node.js" />
+<br><strong>Node.js</strong>
+</td>
+<td align="center" width="120">
+<img src="https://skillicons.dev/icons?i=express" width="48" height="48" alt="Express.js" />
+<br><strong>Express.js</strong>
+</td>
+<td align="center" width="120">
+<img src="https://skillicons.dev/icons?i=mongodb" width="48" height="48" alt="MongoDB" />
+<br><strong>MongoDB</strong>
+</td>
+<td align="center" width="120">
+<img src="https://skillicons.dev/icons?i=js" width="48" height="48" alt="JWT" />
+<br><strong>JWT Auth</strong>
+</td>
+</tr>
 </table>
 
 ### 📦 Key Dependencies
 
+**Frontend Dependencies:**
 ```json
 {
   "react": "^18.2.0",
@@ -103,6 +275,22 @@
   "@dnd-kit/core": "^6.0.8",
   "lucide-react": "^0.279.0",
   "date-fns": "^2.30.0"
+}
+```
+
+**Backend Dependencies:**
+```json
+{
+  "express": "^4.18.2",
+  "mongoose": "^7.5.0",
+  "jsonwebtoken": "^9.0.2",
+  "bcryptjs": "^2.4.3",
+  "express-validator": "^7.0.1",
+  "cors": "^2.8.5",
+  "helmet": "^7.0.0",
+  "express-rate-limit": "^6.10.0",
+  "morgan": "^1.10.0",
+  "dotenv": "^16.3.1"
 }
 ```
 
@@ -131,17 +319,118 @@
 Before you begin, ensure you have the following installed:
 - **Node.js** (v16.0 or higher)
 - **npm** (v7.0 or higher) or **yarn** (v1.22 or higher)
+- **MongoDB** (v6.0 or higher) - [Download MongoDB](https://www.mongodb.com/try/download/community)
 - **Git** (for cloning the repository)
 
 ### 🚀 Quick Start
 
-1. **Clone the repository:**
+#### 1. Clone the repository:
+```bash
+git clone https://github.com/ganiket25201001/Car-Dealership-Website.git
+cd Car-Dealership-Website/leadflow-pro
+```
+
+#### 2. MongoDB Setup
+
+**Option A: Local MongoDB Installation**
+
+1. **Download and install MongoDB Community Server:**
+   - Visit [MongoDB Download Center](https://www.mongodb.com/try/download/community)
+   - Choose your operating system and download
+   - Follow the installation wizard
+
+2. **Start MongoDB service:**
    ```bash
-   git clone https://github.com/ganiket25201001/Car-Dealership-Website.git
-   cd Car-Dealership-Website
+   # Windows (as Administrator)
+   net start MongoDB
+   
+   # macOS
+   brew services start mongodb-community
+   
+   # Linux
+   sudo systemctl start mongod
    ```
 
-2. **Install dependencies:**
+3. **Verify MongoDB is running:**
+   ```bash
+   mongo --version
+   # or
+   mongosh --version
+   ```
+
+**Option B: MongoDB Atlas (Cloud)**
+
+1. Create account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a new cluster
+3. Get your connection string
+4. Replace `localhost` connection in step 4 with your Atlas connection string
+
+#### 3. Backend Setup
+
+1. **Navigate to server directory:**
+   ```bash
+   cd server
+   ```
+
+2. **Install backend dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Create environment file:**
+   ```bash
+   # Create .env file in server directory
+   copy .env.example .env  # Windows
+   # or
+   cp .env.example .env    # macOS/Linux
+   ```
+
+4. **Configure environment variables in `.env`:**
+   ```env
+   # Database Configuration
+   MONGO_URI=mongodb://localhost:27017/leadflow-pro
+   
+   # JWT Configuration
+   JWT_SECRET=your-super-secure-jwt-secret-key-make-it-very-long-and-random
+   JWT_EXPIRE=30d
+   JWT_COOKIE_EXPIRE=30
+   
+   # Server Configuration
+   NODE_ENV=development
+   PORT=5000
+   
+   # Frontend URL (for CORS)
+   FRONTEND_URL=http://localhost:3002
+   ```
+
+5. **Initialize database with sample data:**
+   ```bash
+   node setup-mongodb.js
+   ```
+   
+   This will create:
+   - 5 sample team members with different roles
+   - 8 realistic leads with various statuses
+   - Performance metrics and analytics data
+   - Default login credentials
+
+6. **Start the backend server:**
+   ```bash
+   npm start
+   # or for development with auto-reload
+   npm run dev
+   ```
+
+   The server will run on `http://localhost:5000`
+
+#### 4. Frontend Setup
+
+1. **Navigate to client directory:**
+   ```bash
+   cd ../client
+   ```
+
+2. **Install frontend dependencies:**
    ```bash
    npm install
    # or
@@ -163,17 +452,39 @@ Before you begin, ensure you have the following installed:
 4. **Open your browser:**
    Navigate to `http://localhost:3002`
 
+### 🔑 Default Login Credentials
+
+After running the MongoDB setup script, you can log in with these accounts:
+
+| Role | Email | Password |
+|------|--------|----------|
+| **Admin** | admin@hsrmotors.com | Admin123! |
+| **Sales Manager** | sarah.johnson@hsrmotors.com | Password123! |
+| **Sales Representative** | mike.wilson@hsrmotors.com | Password123! |
+| **Sales Representative** | emily.davis@hsrmotors.com | Password123! |
+| **Sales Representative** | james.smith@hsrmotors.com | Password123! |
+
 ### 🏗️ Build for Production
 
+#### Frontend Build:
 ```bash
+cd client
 npm run build
 # or
 yarn build
 ```
 
-The optimized build will be available in the `dist/` directory.
+#### Backend Production:
+```bash
+cd server
+NODE_ENV=production npm start
+```
+
+The optimized build will be available in the `client/dist/` directory.
 
 ### 🔧 Development Scripts
+
+**Frontend Scripts (client/):**
 
 | Command | Description |
 |---------|-------------|
@@ -182,6 +493,102 @@ The optimized build will be available in the `dist/` directory.
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint for code quality |
 | `npm run type-check` | Run TypeScript type checking |
+
+**Backend Scripts (server/):**
+
+| Command | Description |
+|---------|-------------|
+| `npm start` | Start production server |
+| `npm run dev` | Start development server with auto-reload |
+| `node setup-mongodb.js` | Initialize database with sample data |
+| `node setup-mongodb.js --clear` | Clear all existing data |
+| `node setup-mongodb.js --help` | Show setup script help |
+
+### 🗄️ Database Management
+
+**MongoDB Setup Commands:**
+
+```bash
+# Initialize database with sample data
+node setup-mongodb.js
+
+# Clear existing data only
+node setup-mongodb.js --clear
+
+# Force setup in production
+node setup-mongodb.js --force
+
+# Get help
+node setup-mongodb.js --help
+```
+
+**Sample Data Includes:**
+- 5 team members (Admin, Manager, Sales Reps)
+- 8 realistic leads with various statuses
+- Interaction history and performance metrics
+- Complete analytics data
+
+## 🔌 API Configuration
+
+### Backend API Endpoints
+
+**Base URL:** `http://localhost:5000/api/v1`
+
+#### Authentication Endpoints:
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - User login
+- `GET /auth/me` - Get current user profile
+- `PUT /auth/me` - Update user profile
+- `GET /auth/logout` - Logout user
+- `PUT /auth/updatepassword` - Update password
+- `POST /auth/forgotpassword` - Forgot password
+- `PUT /auth/resetpassword/:token` - Reset password
+- `GET /auth/check` - Check authentication status
+
+#### Lead Management Endpoints:
+- `GET /leads` - Get all leads (with pagination, filters, search)
+- `POST /leads` - Create new lead
+- `GET /leads/:id` - Get single lead
+- `PUT /leads/:id` - Update lead
+- `DELETE /leads/:id` - Delete lead (soft delete)
+- `POST /leads/:id/interactions` - Add interaction to lead
+- `PATCH /leads/:id/status` - Update lead status
+- `GET /leads/status/:status` - Get leads by status (Kanban)
+- `PATCH /leads/bulk` - Bulk update leads
+- `GET /leads/analytics/summary` - Lead analytics
+
+#### Team Management Endpoints:
+- `GET /team` - Get all team members
+- `POST /team` - Create team member (Admin/Manager only)
+- `GET /team/:id` - Get single team member
+- `PUT /team/:id` - Update team member
+- `DELETE /team/:id` - Delete team member (Admin only)
+- `PUT /team/:id/password` - Change password
+- `PATCH /team/:id/status` - Update member status
+- `GET /team/:id/performance` - Get performance data
+- `GET /team/analytics/summary` - Team analytics
+
+### Database Schema
+
+**Lead Model:**
+- Advanced lead scoring (100-point algorithm)
+- Interaction tracking with outcomes
+- Vehicle interest and preferences
+- Status progression tracking
+- Performance analytics
+
+**TeamMember Model:**
+- Role-based access control
+- Performance metrics tracking
+- Authentication with JWT
+- Secure password management
+
+**Features:**
+- JWT Authentication with role-based access
+- Advanced MongoDB queries with aggregation
+- Real-time lead scoring and analytics
+- Comprehensive error handling
+- Input validation and sanitization
 
 ## 🎯 Usage
 
@@ -210,32 +617,57 @@ Our AI-powered lead scoring system evaluates leads based on:
 
 ```
 leadflow-pro/
-├── 📁 public/                  # Static assets
-├── 📁 src/
-│   ├── 📁 components/          # Reusable UI components
-│   │   ├── 📁 ui/             # Base components (Button, Card, etc.)
-│   │   └── Layout.tsx         # Main layout wrapper
-│   ├── 📁 contexts/           # React Context providers
-│   │   ├── ThemeContext.tsx   # Theme management
-│   │   └── UserContext.tsx    # User state management
-│   ├── 📁 pages/              # Application screens
-│   │   ├── Dashboard.tsx      # 📊 Analytics dashboard
-│   │   ├── LeadListing.tsx    # 📋 Lead table view
-│   │   ├── LeadDetails.tsx    # 👤 Individual lead view
-│   │   ├── LeadManagement.tsx # 🎯 Kanban board
-│   │   └── UserProfile.tsx    # 👤 User settings
-│   ├── 📁 services/           # Business logic
-│   │   └── mockData.ts        # Sample data and algorithms
-│   ├── 📁 types/              # TypeScript definitions
-│   │   └── index.ts           # Interface definitions
-│   ├── App.tsx                # Root component
-│   ├── main.tsx               # Application entry point
-│   └── index.css              # Global styles
-├── 📄 package.json            # Dependencies and scripts
-├── 📄 tailwind.config.js      # Tailwind configuration
-├── 📄 tsconfig.json           # TypeScript configuration
-├── 📄 vite.config.ts          # Vite build configuration
-└── 📄 README.md               # Project documentation
+├── 📁 client/                  # React Frontend
+│   ├── 📁 public/              # Static assets
+│   ├── 📁 src/
+│   │   ├── 📁 components/      # Reusable UI components
+│   │   │   ├── 📁 ui/         # Base components (Button, Card, etc.)
+│   │   │   └── Layout.tsx     # Main layout wrapper
+│   │   ├── 📁 contexts/       # React Context providers
+│   │   │   ├── ThemeContext.tsx # Theme management
+│   │   │   └── UserContext.tsx  # User state management
+│   │   ├── 📁 pages/          # Application screens
+│   │   │   ├── Dashboard.tsx  # 📊 Analytics dashboard
+│   │   │   ├── LeadListing.tsx # 📋 Lead table view
+│   │   │   ├── LeadDetails.tsx # 👤 Individual lead view
+│   │   │   ├── LeadManagement.tsx # 🎯 Kanban board
+│   │   │   └── UserProfile.tsx # 👤 User settings
+│   │   ├── 📁 services/       # API services
+│   │   │   ├── apiClient.js   # HTTP client configuration
+│   │   │   ├── authService.js # Authentication API
+│   │   │   ├── leadService.js # Lead management API
+│   │   │   └── teamService.js # Team management API
+│   │   ├── 📁 types/          # TypeScript definitions
+│   │   │   └── index.ts       # Interface definitions
+│   │   ├── App.tsx            # Root component
+│   │   ├── main.tsx           # Application entry point
+│   │   └── index.css          # Global styles
+│   ├── 📄 package.json        # Frontend dependencies
+│   ├── 📄 tailwind.config.js  # Tailwind configuration
+│   ├── 📄 tsconfig.json       # TypeScript configuration
+│   └── 📄 vite.config.ts      # Vite build configuration
+├── 📁 server/                 # Node.js Backend
+│   ├── 📁 middleware/         # Express middleware
+│   │   ├── authMiddleware.js  # JWT authentication
+│   │   └── errorMiddleware.js # Error handling
+│   ├── 📁 models/             # Mongoose models
+│   │   ├── Lead.js           # Lead data model
+│   │   ├── TeamMember.js     # Team member model
+│   │   ├── User.js           # User model
+│   │   └── index.js          # Model exports
+│   ├── 📁 routes/             # API endpoints
+│   │   ├── auth.js           # Authentication routes
+│   │   ├── leads.js          # Lead management routes
+│   │   ├── team.js           # Team management routes
+│   │   └── index.js          # Route aggregation
+│   ├── 📄 server.js           # Express server setup
+│   ├── 📄 setup-mongodb.js    # Database initialization
+│   ├── 📄 package.json        # Backend dependencies
+│   └── 📄 .env.example        # Environment template
+├── 📄 README.md               # Project documentation
+├── 📄 LICENSE                 # MIT License
+├── 📄 CONTRIBUTING.md         # Contribution guidelines
+└── 📄 CHANGELOG.md            # Version history
 ```
 
 ## 🔗 API Reference

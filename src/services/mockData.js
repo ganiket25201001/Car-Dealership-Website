@@ -1,72 +1,71 @@
 // Temporary mock data service for development
 // This will be replaced with actual API calls to the MongoDB backend
+// @ts-check
 
-export interface VehicleInterest {
-  type: string;
-  budget: {
-    min: number;
-    max: number;
-  };
-  financing: boolean;
-  tradeIn?: string;
-  timeline: string;
-}
+/**
+ * @typedef {Object} VehicleInterest
+ * @property {string} type
+ * @property {{min: number, max: number}} budget
+ * @property {boolean} financing
+ * @property {string} [tradeIn]
+ * @property {string} timeline
+ */
 
-export interface Interaction {
-  id: string;
-  type: 'call' | 'email' | 'meeting' | 'note';
-  date: Date;
-  duration?: number;
-  outcome?: string;
-  notes: string;
-  createdBy: string;
-}
+/**
+ * @typedef {Object} Interaction
+ * @property {string} id
+ * @property {'call'|'email'|'meeting'|'note'} type
+ * @property {Date} date
+ * @property {number} [duration]
+ * @property {string} [outcome]
+ * @property {string} notes
+ * @property {string} createdBy
+ */
 
-export interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address?: string;
-  source: 'facebook' | 'google' | 'website' | 'twitter' | 'offline';
-  status: 'new' | 'contacted' | 'qualified' | 'negotiating' | 'converted' | 'not-interested';
-  score: number;
-  assignedTo?: string;
-  vehicleInterest?: VehicleInterest;
-  createdAt: Date;
-  lastActivity: Date;
-  nextFollowUp?: Date;
-  notes: string;
-  tags: string[];
-  interactions: Interaction[];
-}
+/**
+ * @typedef {Object} Lead
+ * @property {string} id
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} [address]
+ * @property {'facebook'|'google'|'website'|'twitter'|'offline'} source
+ * @property {'new'|'contacted'|'qualified'|'negotiating'|'converted'|'not-interested'} status
+ * @property {number} score
+ * @property {string} [assignedTo]
+ * @property {VehicleInterest} [vehicleInterest]
+ * @property {Date} createdAt
+ * @property {Date} lastActivity
+ * @property {Date} [nextFollowUp]
+ * @property {string} notes
+ * @property {string[]} tags
+ * @property {Interaction[]} interactions
+ */
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: 'sales' | 'manager';
-  avatar?: string;
-  status: 'available' | 'busy' | 'offline';
-  leadsAssigned: number;
-  conversionRate: number;
-}
+/**
+ * @typedef {Object} TeamMember
+ * @property {string} id
+ * @property {string} name
+ * @property {string} email
+ * @property {'sales'|'manager'} role
+ * @property {string} [avatar]
+ * @property {'available'|'busy'|'offline'} status
+ * @property {number} leadsAssigned
+ * @property {number} conversionRate
+ */
 
-export interface KPIData {
-  totalLeads: number;
-  conversionRate: number;
-  revenue: number;
-  responseTime: number;
-  trends: {
-    totalLeads: number;
-    conversionRate: number;
-    revenue: number;
-    responseTime: number;
-  };
-}
+/**
+ * @typedef {Object} KPIData
+ * @property {number} totalLeads
+ * @property {number} conversionRate
+ * @property {number} revenue
+ * @property {number} responseTime
+ * @property {{totalLeads: number, conversionRate: number, revenue: number, responseTime: number}} trends
+ */
 
 // Mock leads data
-export const mockLeads: Lead[] = [
+/** @type {Lead[]} */
+export const mockLeads = [
   {
     id: '1',
     name: 'John Anderson',
@@ -260,7 +259,8 @@ export const mockLeads: Lead[] = [
 ];
 
 // Mock team members data
-export const mockTeamMembers: TeamMember[] = [
+/** @type {TeamMember[]} */
+export const mockTeamMembers = [
   {
     id: '1',
     name: 'Sarah Johnson',
@@ -294,7 +294,8 @@ export const mockTeamMembers: TeamMember[] = [
 ];
 
 // Mock KPI data
-export const mockKPIData: KPIData = {
+/** @type {KPIData} */
+export const mockKPIData = {
   totalLeads: 156,
   conversionRate: 24.5,
   revenue: 890000,
@@ -310,8 +311,10 @@ export const mockKPIData: KPIData = {
 // Utility functions for lead scoring and management
 /**
  * Calculate lead score based on various factors
+ * @param {Lead} lead 
+ * @returns {number}
  */
-export const calculateLeadScore = (lead: Lead): number => {
+export const calculateLeadScore = (lead) => {
   let score = 0;
   
   // Budget score (0-30 points)
@@ -337,15 +340,11 @@ export const calculateLeadScore = (lead: Lead): number => {
   score += Math.min(lead.interactions.length * 5, 25);
   
   // Source score (0-10 points)
-  const sourceScores: Record<Lead['source'], number> = { 
-    'website': 10, 'google': 9, 'facebook': 7, 'twitter': 6, 'offline': 5 
-  };
+  const sourceScores = { 'website': 10, 'google': 9, 'facebook': 7, 'twitter': 6, 'offline': 5 };
   score += sourceScores[lead.source] || 5;
   
   // Status score (0-10 points)
-  const statusScores: Record<Lead['status'], number> = { 
-    'new': 5, 'contacted': 6, 'qualified': 8, 'negotiating': 10, 'converted': 0, 'not-interested': 0 
-  };
+  const statusScores = { 'new': 5, 'contacted': 6, 'qualified': 8, 'negotiating': 10, 'converted': 0, 'not-interested': 0 };
   score += statusScores[lead.status] || 5;
   
   return Math.min(score, 100);
@@ -353,21 +352,27 @@ export const calculateLeadScore = (lead: Lead): number => {
 
 /**
  * Get leads by status
+ * @param {string} status 
+ * @returns {Lead[]}
  */
-export const getLeadsByStatus = (status: Lead['status']): Lead[] => {
+export const getLeadsByStatus = (status) => {
   return mockLeads.filter(lead => lead.status === status);
 };
 
 /**
  * Get lead by ID
+ * @param {string} id 
+ * @returns {Lead|undefined}
  */
-export const getLeadById = (id: string): Lead | undefined => {
+export const getLeadById = (id) => {
   return mockLeads.find(lead => lead.id === id);
 };
 
 /**
  * Get team member by ID
+ * @param {string} id 
+ * @returns {TeamMember|undefined}
  */
-export const getTeamMemberById = (id: string): TeamMember | undefined => {
+export const getTeamMemberById = (id) => {
   return mockTeamMembers.find(member => member.id === id);
 };
