@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { TeamMember } = require('../models');
+const { User } = require('../models');
 const { asyncHandler, errorResponse } = require('./errorMiddleware');
 
 // Protect routes - require authentication
@@ -25,9 +25,10 @@ const protect = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // Get user from token
-    const user = await TeamMember.findById(decoded.id)
+    const user = await User.findById(decoded.id)
       .select('-password')
-      .where({ isActive: true, status: 'active' });
+      .populate('group', 'name')
+      .where({ isActive: true });
 
     if (!user) {
       return errorResponse(res, 401, 'User not found or inactive');
@@ -84,9 +85,10 @@ const optionalAuth = asyncHandler(async (req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await TeamMember.findById(decoded.id)
+      const user = await User.findById(decoded.id)
         .select('-password')
-        .where({ isActive: true, status: 'active' });
+        .populate('group', 'name')
+        .where({ isActive: true });
 
       if (user) {
         req.user = user;
@@ -99,6 +101,60 @@ const optionalAuth = asyncHandler(async (req, res, next) => {
 
   next();
 });
+
+// RBAC Permission Checking Functions
+const requireRole = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return errorResponse(res, 401, 'Access denied. Please login first');
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return errorResponse(res, 403, `Access denied. Your role '${req.user.role}' does not have permission`);
+    }
+
+    next();
+  };
+};
+
+const requireAdmin = requireRole('admin');
+const requireLeader = requireRole('admin', 'leader');
+const requireUser = requireRole('admin', 'leader', 'user');
+
+// Check if user can edit a specific lead
+const canEditLead = (req, res, next) => {
+  if (!req.user) {
+    return errorResponse(res, 401, 'Access denied. Please login first');
+  }
+
+  // Admin can edit any lead
+  if (req.user.role === 'admin') {
+    return next();
+  }
+
+  // For Leaders and Users, we need to check lead ownership
+  // This will be handled in the route handler as we need the lead data
+  next();
+};
+
+// Check if user can manage group
+const canManageGroup = (req, res, next) => {
+  if (!req.user) {
+    return errorResponse(res, 401, 'Access denied. Please login first');
+  }
+
+  // Admin can manage any group
+  if (req.user.role === 'admin') {
+    return next();
+  }
+
+  // Leaders can manage their own group
+  if (req.user.role === 'leader') {
+    return next(); // We'll check group ownership in the route handler
+  }
+
+  return errorResponse(res, 403, 'Access denied. You do not have group management permissions');
+};
 
 // Rate limiting middleware
 const rateLimit = require('express-rate-limit');
@@ -144,6 +200,12 @@ module.exports = {
   authorize,
   checkPermission,
   optionalAuth,
+  requireRole,
+  requireAdmin,
+  requireLeader,
+  requireUser,
+  canEditLead,
+  canManageGroup,
   authRateLimit,
   generalRateLimit,
   apiRateLimit

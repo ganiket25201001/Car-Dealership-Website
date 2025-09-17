@@ -75,6 +75,11 @@ const leadSchema = new mongoose.Schema({
     ref: 'TeamMember',
     default: null
   },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   tags: [{
     type: String,
     trim: true,

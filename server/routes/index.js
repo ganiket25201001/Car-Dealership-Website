@@ -5,6 +5,9 @@ const router = express.Router();
 const authRoutes = require('./auth');
 const leadRoutes = require('./leads');
 const teamRoutes = require('./team');
+const groupRoutes = require('./groups');
+const adminRoutes = require('./admin');
+const userRoutes = require('./users');
 
 // Import middleware
 const { protect } = require('../middleware/authMiddleware');
@@ -14,6 +17,9 @@ const { asyncHandler, successResponse } = require('../middleware/errorMiddleware
 router.use('/auth', authRoutes);
 router.use('/leads', leadRoutes);
 router.use('/team', teamRoutes);
+router.use('/groups', groupRoutes);
+router.use('/admin', adminRoutes);
+router.use('/users', userRoutes);
 
 // @desc    API Health Check
 // @route   GET /api/v1/health
