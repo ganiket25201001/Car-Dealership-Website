@@ -1,16 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Save, ArrowLeft } from 'lucide-react';
+import { Save, ArrowLeft, AlertCircle, CheckCircle } from 'lucide-react';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { mockLeads } from '../services/mockData';
 import { Lead } from '../types';
 
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  source: string;
+  status: string;
+  vehicleType: string;
+  budgetMin: string;
+  budgetMax: string;
+  financing: boolean;
+  tradeIn: string;
+  timeline: string;
+  notes: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  budgetMin?: string;
+  budgetMax?: string;
+}
+
 export default function LeadEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [lead, setLead] = useState<Lead | null>(null);
-  const [formData, setFormData] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errors, setErrors] = useState<FormErrors>({});
+  
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     phone: '',
@@ -48,20 +76,88 @@ export default function LeadEdit() {
     }
   }, [id]);
 
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    // Required field validation
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^[\+]?[1-9][\d\s\-\(\)]{8,15}$/.test(formData.phone.replace(/\s/g, ''))) {
+      newErrors.phone = 'Please enter a valid phone number';
+    }
+
+    // Budget validation
+    if (formData.budgetMin && formData.budgetMax) {
+      const minBudget = parseInt(formData.budgetMin);
+      const maxBudget = parseInt(formData.budgetMax);
+      
+      if (minBudget < 0) {
+        newErrors.budgetMin = 'Minimum budget cannot be negative';
+      }
+      if (maxBudget < 0) {
+        newErrors.budgetMax = 'Maximum budget cannot be negative';
+      }
+      if (minBudget >= maxBudget) {
+        newErrors.budgetMax = 'Maximum budget must be greater than minimum budget';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
+    
+    // Clear error for this field if it exists
+    if (errors[name as keyof FormErrors]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: undefined
+      }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would save to backend
-    console.log('Saving lead data:', formData);
-    alert('Lead updated successfully! (This is a demo)');
-    navigate(`/leads/${id}`);
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    setSuccessMessage('');
+
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setSuccessMessage('Lead updated successfully!');
+      
+      // Navigate back to lead details after success
+      setTimeout(() => {
+        navigate(`/leads/${id}`);
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Error updating lead:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -91,19 +187,29 @@ export default function LeadEdit() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Lead</h1>
-            <p className="text-gray-600">Update lead information</p>
+            <p className="text-gray-600 dark:text-gray-400">Update lead information</p>
           </div>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Success Message */}
+        {successMessage && (
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4">
+            <div className="flex items-center">
+              <CheckCircle className="w-5 h-5 text-green-400 mr-2" />
+              <p className="text-sm text-green-800 dark:text-green-200">{successMessage}</p>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
           <Card>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Personal Information</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Full Name *
                 </label>
                 <input
@@ -113,12 +219,22 @@ export default function LeadEdit() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white ${
+                    errors.name 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
                 />
+                {errors.name && (
+                  <div className="flex items-center mt-1">
+                    <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                    <p className="text-sm text-red-600">{errors.name}</p>
+                  </div>
+                )}
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Email *
                 </label>
                 <input
@@ -128,12 +244,22 @@ export default function LeadEdit() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white ${
+                    errors.email 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
                 />
+                {errors.email && (
+                  <div className="flex items-center mt-1">
+                    <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                    <p className="text-sm text-red-600">{errors.email}</p>
+                  </div>
+                )}
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Phone *
                 </label>
                 <input
@@ -143,12 +269,22 @@ export default function LeadEdit() {
                   required
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white ${
+                    errors.phone 
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
                 />
+                {errors.phone && (
+                  <div className="flex items-center mt-1">
+                    <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                    <p className="text-sm text-red-600">{errors.phone}</p>
+                  </div>
+                )}
               </div>
 
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Address
                 </label>
                 <input
@@ -157,7 +293,7 @@ export default function LeadEdit() {
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
                 />
               </div>
             </div>
@@ -168,7 +304,7 @@ export default function LeadEdit() {
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Lead Information</h2>
             <div className="space-y-4">
               <div>
-                <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="source" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Source
                 </label>
                 <select
@@ -189,7 +325,7 @@ export default function LeadEdit() {
               </div>
 
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Status
                 </label>
                 <select
@@ -210,7 +346,7 @@ export default function LeadEdit() {
               </div>
 
               <div>
-                <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="vehicleType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Vehicle Interest
                 </label>
                 <select
@@ -232,7 +368,7 @@ export default function LeadEdit() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="budgetMin" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="budgetMin" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Min Budget ($)
                   </label>
                   <input
@@ -241,11 +377,21 @@ export default function LeadEdit() {
                     name="budgetMin"
                     value={formData.budgetMin}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white ${
+                      errors.budgetMin 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                        : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                    }`}
                   />
+                  {errors.budgetMin && (
+                    <div className="flex items-center mt-1">
+                      <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                      <p className="text-sm text-red-600">{errors.budgetMin}</p>
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <label htmlFor="budgetMax" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="budgetMax" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Max Budget ($)
                   </label>
                   <input
@@ -254,8 +400,18 @@ export default function LeadEdit() {
                     name="budgetMax"
                     value={formData.budgetMax}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 dark:bg-gray-800 dark:text-white ${
+                      errors.budgetMax 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
+                        : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                    }`}
                   />
+                  {errors.budgetMax && (
+                    <div className="flex items-center mt-1">
+                      <AlertCircle className="w-4 h-4 text-red-500 mr-1" />
+                      <p className="text-sm text-red-600">{errors.budgetMax}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,13 +431,13 @@ export default function LeadEdit() {
                 onChange={handleInputChange}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="financing" className="ml-2 block text-sm text-gray-700">
+              <label htmlFor="financing" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                 Needs Financing
               </label>
             </div>
 
             <div>
-              <label htmlFor="tradeIn" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="tradeIn" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Trade-in Vehicle
               </label>
               <input
@@ -296,7 +452,7 @@ export default function LeadEdit() {
             </div>
 
             <div>
-              <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="timeline" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Purchase Timeline
               </label>
               <select
@@ -317,7 +473,7 @@ export default function LeadEdit() {
             </div>
 
             <div>
-              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Notes
               </label>
               <textarea
@@ -337,18 +493,19 @@ export default function LeadEdit() {
         <div className="flex justify-end space-x-4">
           <Button
             type="button"
-            variant="secondary"
             onClick={handleCancel}
+            disabled={isLoading}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white"
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            variant="primary"
-            className="flex items-center space-x-2"
+            disabled={isLoading}
+            className={`flex items-center space-x-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <Save className="w-4 h-4" />
-            <span>Save Changes</span>
+            <span>{isLoading ? 'Saving...' : 'Save Changes'}</span>
           </Button>
         </div>
       </form>

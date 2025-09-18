@@ -1,203 +1,130 @@
-# 🚗 LeadFlow Pro - HSR Motors Lead Management System
+# LeadFlow Pro - HSR Motors
 
-<div align="center">
+A modern lead management system for automotive dealerships.
 
-![LeadFlow Pro Logo](https://via.placeholder.com/200x120/2563EB/FFFFFF?text=LeadFlow+Pro)
+## Features
 
-[![GitHub stars](https://img.shields.io/github/stars/ganiket25201001/Car-Dealership-Website?style=for-the-badge&logo=github)](https://github.com/ganiket25201001/Car-Dealership-Website/stargazers)
-[![GitHub license](https://img.shields.io/github/license/ganiket25201001/Car-Dealership-Website?style=for-the-badge)](https://github.com/ganiket25201001/Car-Dealership-Website/blob/main/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/ganiket25201001/Car-Dealership-Website?style=for-the-badge)](https://github.com/ganiket25201001/Car-Dealership-Website/issues)
-[![GitHub forks](https://img.shields.io/github/forks/ganiket25201001/Car-Dealership-Website?style=for-the-badge)](https://github.com/ganiket25201001/Car-Dealership-Website/network)
+- 📊 Professional Dashboard with analytics
+- 👥 Lead Management & Tracking
+- 🎯 Team Performance Monitoring
+- 📱 Mobile Responsive Design
+- 🌙 Dark/Light Theme Support
+- 🔐 User Authentication & Authorization
 
-### 🎯 Transform Leads Into Sales, Seamlessly
+## Tech Stack
 
-[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat-square&logo=react&logoColor=white)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-47A248?style=flat-square&logo=mongodb&logoColor=white)](https://mongodb.com/)
-[![Vite](https://img.shields.io/badge/Vite-4.4+-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3+-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcssw Pro - HSR Motors Lead Management System
+- **Frontend**: React + TypeScript + Vite
+- **Backend**: Node.js + Express
+- **Database**: MongoDB
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
 
-<div align="center">
+## Quick Start
 
-![LeadFlow Pro Logo](https://via.placeholder.com/150x150/2563EB/FFFFFF?text=LFP)
+### Prerequisites
 
-**Transform Leads Into Sales, Seamlessly**
+- Node.js 18+
+- MongoDB
+- Git
 
-[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-4.4+-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3+-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)](https:## 🛠️ Troubleshooting & FAQ
+### Installation
 
-<div align="center">
-
-### 🔍 Common Issues & Solutions
-
-</div>
-
-<details>
-<summary><strong>🔴 MongoDB Connection Error</strong></summary>
-
-**Error:** `connect ECONNREFUSED ::1:27017`
-
-**Solutions:**
+1. Clone the repository:
 ```bash
-# Windows - Start MongoDB service
-net start MongoDB
-
-# macOS - Start MongoDB
-brew services start mongodb-community
-
-# Linux - Start MongoDB
-sudo systemctl start mongod
-
-# Verify MongoDB is running
-mongosh --eval "db.runCommand('ping')"
+git clone https://github.com/ganiket25201001/Car-Dealership-Website.git
+cd Car-Dealership-Website/leadflow-pro
 ```
 
-**Check Connection String:**
-- Ensure `MONGO_URI` in `.env` file is correct
-- Default: `mongodb://localhost:27017/leadflow-pro`
-- For Atlas: Use your cluster connection string
-
-</details>
-
-<details>
-<summary><strong>🔐 JWT Authentication Error</strong></summary>
-
-**Error:** `JWT_SECRET environment variable is required`
-
-**Solution:**
-```env
-# Add to server/.env file
-JWT_SECRET=your-super-secure-jwt-secret-key-minimum-32-characters-long
-JWT_EXPIRE=30d
-JWT_COOKIE_EXPIRE=30
-```
-
-**Generate Secure JWT Secret:**
+2. Install dependencies:
 ```bash
-# Node.js command to generate random secret
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-</details>
-
-<details>
-<summary><strong>🔌 Port Already in Use</strong></summary>
-
-**Error:** `listen EADDRINUSE: address already in use :::5000`
-
-**Solutions:**
-
-**Windows:**
-```bash
-# Find process using port 5000
-netstat -ano | findstr :5000
-
-# Kill process (replace PID with actual process ID)
-taskkill /PID <PID> /F
-
-# Or change port in server/.env
-PORT=5001
-```
-
-**macOS/Linux:**
-```bash
-# Find and kill process using port 5000
-lsof -ti:5000 | xargs kill -9
-
-# Or change port in server/.env  
-PORT=5001
-```
-
-</details>
-
-<details>
-<summary><strong>🌐 CORS Errors</strong></summary>
-
-**Error:** `Access to fetch at 'http://localhost:5000' has been blocked by CORS`
-
-**Solutions:**
-1. **Ensure both servers are running:**
-   - Frontend: http://localhost:3002
-   - Backend: http://localhost:5000
-
-2. **Check CORS configuration in server/.env:**
-   ```env
-   FRONTEND_URL=http://localhost:3002
-   ```
-
-3. **For custom ports, update server/server.js:**
-   ```javascript
-   const allowedOrigins = [
-     'http://localhost:3002',
-     'http://localhost:3001',  // Add your custom port
-     'http://your-domain.com'
-   ];
-   ```
-
-</details>
-
-<details>
-<summary><strong>💾 Database Seeding Issues</strong></summary>
-
-**Error:** Various validation or data creation errors
-
-**Solutions:**
-```bash
-# Clear database and retry
-node setup-mongodb.js --clear
-node setup-mongodb.js
-
-# Force setup (ignores existing data warnings)
-node setup-mongodb.js --force
-
-# Check MongoDB logs
-tail -f /var/log/mongodb/mongod.log  # Linux
-# or check Windows Event Viewer for MongoDB logs
-```
-
-</details>
-
-<details>
-<summary><strong>📦 Package Installation Issues</strong></summary>
-
-**Error:** `npm install` failures
-
-**Solutions:**
-```bash
-# Clear npm cache
-npm cache clean --force
-
-# Remove node_modules and reinstall
-rm -rf node_modules package-lock.json  # macOS/Linux
-rmdir /s node_modules & del package-lock.json  # Windows
+# Install frontend dependencies
 npm install
 
-# Use yarn as alternative
-npm install -g yarn
-yarn install
-
-# Check Node.js version compatibility
-node --version  # Should be v18.0+
+# Install backend dependencies
+cd server
+npm install
+cd ..
 ```
 
-</details>
-
-### 🔍 Debug Mode
-
-Enable debug logging in development:
-
+3. Set up environment variables:
 ```bash
 # In server/.env
-NODE_ENV=development
-DEBUG=leadflow:*
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/leadflow-pro
+JWT_SECRET=your-secure-jwt-secret-key
+FRONTEND_URL=http://localhost:3001
 ```
 
-### 📱 Mobile Development
+4. Start MongoDB service:
+```bash
+# Windows
+net start MongoDB
 
-For mobile testing, update CORS origins in `server/server.js`:
+# macOS
+brew services start mongodb-community
+
+# Linux
+sudo systemctl start mongod
+```
+
+5. Initialize the database:
+```bash
+cd server
+node setup-mongodb.js
+```
+
+6. Start the application:
+```bash
+# Start backend (from server directory)
+npm run dev
+
+# Start frontend (from root directory)
+npm run dev
+```
+
+7. Open your browser and visit:
+- Frontend: http://localhost:3001
+- Backend API: http://localhost:5000
+
+## Default Login
+
+- **Email**: admin@hsrmotors.com
+- **Password**: admin123
+
+## Project Structure
+
+```
+leadflow-pro/
+├── src/                    # Frontend source code
+│   ├── components/         # Reusable components
+│   ├── pages/             # Page components
+│   ├── contexts/          # React contexts
+│   └── styles/            # CSS files
+├── server/                # Backend source code
+│   ├── models/            # Database models
+│   ├── routes/            # API routes
+│   └── middleware/        # Express middleware
+└── public/               # Static assets
+```
+
+## Available Scripts
+
+### Frontend
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+
+### Backend
+- `npm run dev` - Start development server
+- `npm start` - Start production server
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For issues or questions, please open an issue on GitHub.
 
 ```javascript
 const allowedOrigins = [
